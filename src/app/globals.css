@@ -1,0 +1,158 @@
+/* Manrope via Google Fonts — DOIT être en première position */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+/* Dark mode strategy : class-based via .dark sur <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+   Design tokens — inspiré Headspace
+   ============================================ */
+@theme {
+  /* Couleurs primaires — orange chaleureux Headspace */
+  --color-primary-50: #fff8f2;
+  --color-primary-100: #feedd9;
+  --color-primary-200: #fdd6ab;
+  --color-primary-300: #fbb87a;
+  --color-primary-400: #f89a4f;
+  --color-primary-500: #f47d31;
+  --color-primary-600: #dc6420;
+  --color-primary-700: #b14e18;
+  --color-primary-800: #7e3911;
+  --color-primary-900: #4d220b;
+
+  /* Navy */
+  --color-navy-50: #f5f7fa;
+  --color-navy-100: #e8ebf1;
+  --color-navy-200: #cdd3dd;
+  --color-navy-300: #a6b1c4;
+  --color-navy-400: #7e8da8;
+  --color-navy-500: #5a6b8c;
+  --color-navy-600: #3f5274;
+  --color-navy-700: #2c3e58;
+  --color-navy-800: #1b2a3e;
+  --color-navy-900: #0e1825;
+  --color-navy-950: #050a14;
+
+  /* Cream */
+  --color-cream-50: #fffaf0;
+  --color-cream-100: #fff4e6;
+  --color-cream-200: #ffe5c7;
+
+  /* Teal */
+  --color-teal-400: #8ecdda;
+  --color-teal-500: #62b6cb;
+  --color-teal-600: #4a9eb3;
+
+  /* Success / Error */
+  --color-success-500: #4caf50;
+  --color-success-600: #43a047;
+  --color-error-500: #e74c3c;
+  --color-error-600: #d63924;
+
+  /* Typographie */
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Rayons */
+  --radius-card: 1.5rem;
+  --radius-button: 9999px;
+}
+
+/* ============================================
+   Base styles
+   ============================================ */
+* {
+  border-color: var(--color-navy-100);
+}
+
+.dark * {
+  border-color: var(--color-navy-700);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-cream-50);
+  color: var(--color-navy-800);
+  font-family: var(--font-body);
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dark body {
+  background-color: var(--color-navy-950);
+  color: var(--color-navy-100);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream-100);
+}
+.dark ::-webkit-scrollbar-track {
+  background: var(--color-navy-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-200);
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-primary-700);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-300);
+}
+
+/* ============================================
+   Utilitaires
+   ============================================ */
+.container-narrow {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-narrow {
+    padding-inline: 2rem;
+  }
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 20px -4px rgba(244, 125, 49, 0.15);
+}
+.shadow-card {
+  box-shadow: 0 8px 32px -8px rgba(27, 42, 62, 0.08);
+}
+.dark .shadow-card {
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation pulse-once pour feedback QCM */
+@keyframes scale-bounce {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.animate-bounce-once {
+  animation: scale-bounce 0.4s ease-out;
+}
+
+/* Animation spin pour timer */
+@keyframes timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-timer-pulse {
+  animation: timer-pulse 1s ease-in-out infinite;
+}
