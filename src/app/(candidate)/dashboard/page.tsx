@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { BookOpen, Car, TrendingUp, Sparkles, ChevronRight, History } from "lucide-react";
+import { BookOpen, TrendingUp, Sparkles, ChevronRight, History, CalendarCheck } from "lucide-react";
 import Link from "next/link";
-import { MODE_CONFIG, CATEGORY_LABELS, type QuizMode, type QuestionCategory } from "@/lib/quiz/types";
+import { MODE_CONFIG, type QuizMode } from "@/lib/quiz/types";
+import { VEHICLE_CONFIG, type VehicleType, type TrainingStage } from "@/lib/bookings/types";
+import { StageProgress } from "@/components/candidate/stage-progress";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -11,11 +13,15 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name")
+    .select("full_name, current_stage, driving_schools(vehicle_type, name)")
     .eq("id", user!.id)
     .single();
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "candidat";
+  const school = profile?.driving_schools as unknown as
+    | { vehicle_type: string; name: string }
+    | null;
+  const currentStage = (profile as { current_stage?: string | null } | null)?.current_stage as TrainingStage | null ?? null;
 
   // Stats : récupère les attempts terminés
   const { data: finishedAttempts } = await supabase
@@ -64,6 +70,34 @@ export default async function DashboardPage() {
           Continuez votre préparation au permis de conduire.
         </p>
       </div>
+
+      {/* Bandeau type de formation */}
+      {school && (
+        <div className="mb-6 flex items-center gap-3 rounded-3xl border-2 border-primary-100 bg-primary-50 px-5 py-3.5 dark:border-primary-900 dark:bg-primary-900/20">
+          <span className="text-2xl">
+            {VEHICLE_CONFIG[(school.vehicle_type as VehicleType) ?? "auto"].emoji}
+          </span>
+          <div>
+            <span className="text-xs font-medium uppercase tracking-wide text-primary-600 dark:text-primary-400">
+              Votre formation
+            </span>
+            <div className="font-bold text-navy-900 dark:text-navy-50">
+              {VEHICLE_CONFIG[(school.vehicle_type as VehicleType) ?? "auto"].label}{" "}
+              <span className="font-normal text-navy-500 dark:text-navy-400">
+                — {school.name}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Progression par étapes */}
+      {school && currentStage && (
+        <StageProgress
+          currentStage={currentStage}
+          vehicleType={(school.vehicle_type as VehicleType) ?? "auto"}
+        />
+      )}
 
       {/* Bandeau "QCM en cours" si applicable */}
       {ongoing && (
@@ -149,20 +183,23 @@ export default async function DashboardPage() {
           </div>
         </Link>
 
-        <div className="rounded-3xl bg-white p-6 shadow-card opacity-60 dark:bg-navy-800">
+        <Link
+          href="/dashboard/reservations"
+          className="group rounded-3xl bg-white p-6 shadow-card transition-transform hover:-translate-y-1 dark:bg-navy-800"
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-400/20 text-teal-600">
-            <Car className="h-6 w-6" />
+            <CalendarCheck className="h-6 w-6" />
           </div>
           <h3 className="mt-4 text-lg font-bold text-navy-900 dark:text-navy-50">
             Mes heures de conduite
           </h3>
           <p className="mt-1 text-sm text-navy-600 dark:text-navy-300">
-            Réservez vos créneaux et suivez votre planning.
+            Réservez un créneau de conduite sur les horaires disponibles.
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-navy-400 dark:text-navy-500">
-            Bientôt disponible
+          <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-teal-600 group-hover:gap-3 dark:text-teal-400">
+            Réserver →
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Bandeau motivation */}

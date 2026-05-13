@@ -58,9 +58,10 @@ export default async function QuizPage({
   }
 
   // Réordonne selon question_ids (l'ordre choisi à la création)
-  const orderedQuestions = attempt.question_ids
-    .map((id: string) => questions.find((q) => q.id === id))
-    .filter((q): q is NonNullable<typeof q> => !!q)
+  type Question = (typeof questions)[number];
+  const orderedQuestions: Question[] = (attempt.question_ids as string[])
+    .map((id) => questions.find((q) => q.id === id))
+    .filter((q): q is Question => !!q)
     .map((q) => ({
       ...q,
       answer_options: [...q.answer_options].sort(
